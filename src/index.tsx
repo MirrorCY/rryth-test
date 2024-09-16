@@ -8,23 +8,25 @@ export function apply(ctx: Context, config: Config) {
   // write your plugin here
   const resolution = (resolution: string): number => +resolution & ~63
   ctx
-    .command('rryth-test <prompt:text>', '人人有图画测试服 v0.0.3')
-    .usage('这里会不定期更新一些有意思的功能，也随时会关闭服务\n这次的是 LCM，它跑的真的很快')
-    .example('rt -b 1 -x 2333 1 girl')
-    .alias('rt')
+    .command('rryth-test <prompt:text>', '人人有图画测试服 v0.0.4')
+    .usage('这里会不定期更新一些有意思的功能，也随时会关闭服务\n这次的是 FLUX，它好像啥风格都能画。')
+    .example('rta -x 2333 1girl')
+    .alias('rt', { options: { width: 768, height: 512 } })
+    .alias('rr', { options: { width: 512, height: 768 } })
+    .alias('rta', { options: { width: 512, height: 768 }, args: ['anime'] })
     .option('seed', '-x <seed:number> 种子')
-    .option('cfg_scale', '-c <cfg_scale:number> 无分类器引导 0-10 默认 10', { fallback: 10 })
+    // .option('cfg_scale', '-c <cfg_scale:number> 无分类器引导 0-10 默认 10', { fallback: 1 })
     .option('width', '-w <width:number> 宽', { fallback: 768, type: resolution })
     .option('height', '-g <height:number> 高', { fallback: 512, type: resolution })
-    .option('batch', '-b <batch:number> 批量', { fallback: config.batch })
+    // .option('batch', '-b <batch:number> 批量', { fallback: config.batch })
     .option('iterations', '-i <iterations:number> 多来几下', { authority: 2 })
-
-    .action(async ({ session, options }, prompt) => {
+    .action(async ({ session, options }, ...prompts) => {
+      const prompt = prompts.join(', ')
       if (!prompt) return session.execute('help rt')
       const request: Request = { prompt, ...options }
       const rr = async (request: Request) => {
-        const { images } = await ctx.http.post('https://api.rryth.com:42421', request, { headers: { 'api': 'LCM' } })
-          .catch(e => console.log(e)) as Response
+        const { images } = await ctx.http.post('https://api.rryth.com:42420', request, { headers: { 'api': 'LCM' } })
+          .catch(e => ctx.logger.error(e)) as Response
         return images.map(image => {
           return config.censor
             ? <censor><img src={'data:image/png;base64,' + image}></img></censor>
@@ -45,8 +47,8 @@ export interface Config {
 }
 
 export const Config: Schema<Config> = Schema.object({
-  censor: Schema.boolean().description('是否启用图像审查。').default(true),
-  batch: Schema.number().description('默认出图数量。').default(4).max(4).min(1).role('slider'),
+  censor: Schema.boolean().description('是否启用图像审查。').default(false),
+  batch: Schema.number().description('默认出图数量。').default(1).max(4).min(1).role('slider').disabled().hidden(),
 })
 
 interface Request {
@@ -61,5 +63,5 @@ interface Request {
 }
 
 interface Response {
-  images: string[] // base64 encoded images
+  images: string[]
 }

@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-rryth-test",
   "description": "人人有图画测试服",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -18,14 +18,14 @@
     "42"
   ],
   "dependencies": {
-    "@satorijs/element": "^3.1.6"
+    "@satorijs/element": "^3.1.7"
   },
   "peerDependencies": {
-    "koishi": "^4.17.2",
-    "koishi-plugin-rr-image-censor": "^2.3.2"
+    "koishi": "^4.17.12",
+    "koishi-plugin-rr-image-censor": "^2.4.1"
   },
   "devDependencies": {
-    "@koishijs/censor": "^1.0.2"
+    "@koishijs/censor": "^1.1.0"
   },
   "koishi": {
     "browser": true,
