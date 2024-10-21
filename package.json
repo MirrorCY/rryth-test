@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-rryth-test",
   "description": "人人有图画测试服",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
